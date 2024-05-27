@@ -1,52 +1,104 @@
+import { useNavigate } from 'react-router-dom'
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			message: null,
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			]
+			inputs: {}
 		},
 		actions: {
-			// Use getActions to call a function within a fuction
-			exampleFunction: () => {
-				getActions().changeColor(0, "green");
-			},
-
 			getMessage: async () => {
 				try{
-					// fetching data from the backend
-					const resp = await fetch(process.env.BACKEND_URL + "/api/hello")
+					const resp = await fetch(process.env.BACKEND_URL + "/api/")
 					const data = await resp.json()
 					setStore({ message: data.message })
-					// don't forget to return something, that is how the async resolves
 					return data;
 				}catch(error){
 					console.log("Error loading message from backend", error)
 				}
 			},
-			changeColor: (index, color) => {
-				//get the store
-				const store = getStore();
 
-				//we have to loop the entire demo array to look for the respective index
-				//and change its color
-				const demo = store.demo.map((elm, i) => {
-					if (i === index) elm.background = color;
-					return elm;
-				});
+			getInput: (event) => {
+				const name = event.target.id;
+				const value = event.target.value;
+				setStore({...getStore,
+						  inputs: {...getStore().inputs, [name]: value}})
+			},
 
-				//reset the global store
-				setStore({ demo: demo });
-			}
+			resetInput: () => {
+				setStore({...getStore,inputs: {}})
+			},
+
+			signup: async (event) => {
+				event.preventDefault()
+
+				const input = getStore().inputs
+
+				const new_user = {
+					"username": input.name,
+					"email": input.email,
+					"password": input.password
+				}
+
+				fetch(process.env.BACKEND_URL + "api/signup", {
+					method: 'POST',
+					body: JSON.stringify(new_user),
+					headers: { "Content-Type": "application/json" },
+				}).then(response => {
+					if(response.ok) return response.json()
+					if(response.status === 412) return alert("You already have an account, please go to login.")
+				}).then(() => {
+					getActions().login()
+				}).catch((error) => {
+					console.error(error)
+				})
+			},
+
+			login: async (event) => {
+				event.preventDefault()
+
+				const input = getStore().inputs
+
+				const user = {
+					"email": input.email,
+					"password": input.password
+				}
+
+				fetch(process.env.BACKEND_URL + "api/login", {
+					method: 'POST',
+					body: JSON.stringify(user),
+					headers: { "Content-Type": "application/json" },
+				}).then(response => {
+					if(response.ok) return response.json()
+					if(response.status === 404) return alert("You don't have an account yet, go to signup")
+					if(response.status === 401) return alert("Wrong email or password :(")
+					throw Error(console.log("Something went wrong with the API"))
+				}).then((data) => {
+					console.log(data);
+					localStorage.setItem('jwt-token', data.token)
+					localStorage.setItem('user', data.username)
+					getActions().resetInput()
+					useNavigate('/welcome')
+				}).catch((error) => {
+					console.error(error)
+				})
+			},
+
+			welcomeUser: async () => {
+				const myToken = localStorage.getItem('jwt-token')
+
+				fetch(process.env.BACKEND_URL + "api/welcome", {
+					method: 'GET',
+					headers: {
+						'Authorization': 'Bearer ' + myToken,
+						"Content-Type": "application/json"
+					}
+				}).then((response) => response.json())
+				.catch((error) => {
+					console.log(error)
+				})
+			},
+			
 		}
 	};
 };
