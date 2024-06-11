@@ -1,5 +1,3 @@
-import { useNavigate } from 'react-router-dom'
-
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -19,7 +17,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			getInput: (event) => {
-				const name = event.target.id;
+				const name = event.target.name;
 				const value = event.target.value;
 				setStore({...getStore,
 						  inputs: {...getStore().inputs, [name]: value}})
@@ -29,13 +27,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({...getStore,inputs: {}})
 			},
 
-			signup: async (event) => {
-				event.preventDefault()
-
+			signup: async () => {
 				const input = getStore().inputs
 
 				const new_user = {
-					"username": input.name,
+					"username": input.username,
 					"email": input.email,
 					"password": input.password
 				}
@@ -78,10 +74,15 @@ const getState = ({ getStore, getActions, setStore }) => {
 					localStorage.setItem('jwt-token', data.token)
 					localStorage.setItem('user', data.username)
 					getActions().resetInput()
-					useNavigate('/welcome')
 				}).catch((error) => {
 					console.error(error)
 				})
+			},
+
+			logout: () => {
+				localStorage.removeItem('jwt-token')
+				localStorage.removeItem('user')
+				getActions().resetInput()
 			},
 
 			welcomeUser: async () => {

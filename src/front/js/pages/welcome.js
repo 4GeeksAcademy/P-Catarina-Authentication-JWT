@@ -5,10 +5,6 @@ import { Card } from "../component/card";
 export const Welcome = () => {
 	const { store, actions } = useContext(Context);
 
-	useEffect(() => {
-		actions.welcomeUser()
-	},[])
-
 	const username = localStorage.getItem('user')
 
 	return (
