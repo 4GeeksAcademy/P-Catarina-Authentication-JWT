@@ -1,9 +1,13 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext";
 import { Link } from "react-router-dom";
 
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
+
+	useEffect(() => {
+		
+	}, [])
 
 	return (
 		<nav className="navbar bg-warning btm-border">
@@ -12,7 +16,7 @@ export const Navbar = () => {
 					<span className="navbar-brand mb-0 h1">Retro Aint Dead-o Club</span>
 				</Link>
 				<div className="ml-auto">
-					{localStorage.getItem('user') === null
+					{typeof localStorage.getItem('user') !== "string"
 					? <Link to="/login">
 						<button className="btn btn-success border">Login</button>
 					</Link>

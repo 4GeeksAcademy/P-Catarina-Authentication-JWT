@@ -30,9 +30,12 @@ export const Signup = () => {
 						name="password"
 						value={store.inputs.password || ""}
 						onChange={event => actions.getInput(event)} />
+				<div type="button" className="btn btn-success col-12 border mt-4" onClick={actions.signup}>
+					Join the Club
+				</div>
 				<Link to="/welcome">
-					<div type="button" className="btn btn-success border mt-4 col-12" onClick={actions.signup}>
-						Join the Club
+					<div className="btn btn-success col-12 border mt-4">
+						Next
 					</div>
 				</Link>
 			</form>

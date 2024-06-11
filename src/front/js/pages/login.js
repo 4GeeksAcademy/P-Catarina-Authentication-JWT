@@ -9,8 +9,7 @@ export const Login = () => {
 	return (
 		<div className="container mt-5 w-25">
 			<div className="card border">
-			<div className="card-body row p-5 g-2">
-				<form>
+			<form className="card-body row p-5 g-2">
 					<label htmlFor="email" className="form-label">Email</label>
 					<input type="email"
 							name="email"
@@ -25,18 +24,20 @@ export const Login = () => {
 							value={store.inputs.password || ""} 
 							onChange={event => actions.getInput(event)}
 							required />
+					<div className="btn btn-success col-12 border mt-4" onClick={actions.login}>
+						Login
+					</div>
 					<Link to="/welcome">
-						<button type="submit" className="btn btn-success col-12 border mt-4" onClick={actions.login}>
-							Login
-						</button>
+						<div className="btn btn-success col-12 border mt-4">
+							Next
+						</div>
 					</Link>
-				</form>
-				<Link to="/signup">
-					<button className="btn btn-dark col-12 border mt-4" onClick={actions.resetInput}>
-						Not part of the club yet?
-					</button>
-				</Link>
-				</div>
+					<Link to="/signup">
+						<div className="btn btn-dark col-12 border mt-4" onClick={actions.resetInput}>
+							Not part of the club yet?
+						</div>
+					</Link>
+			</form>
 			</div>
 		</div>
 	);

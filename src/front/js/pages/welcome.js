@@ -1,13 +1,11 @@
-import React, { useContext, useEffect } from "react";
-import { Context } from "../store/appContext";
+import React from "react";
 import { Card } from "../component/card";
 
 export const Welcome = () => {
-	const { store, actions } = useContext(Context);
-
-	const username = localStorage.getItem('user')
-
 	return (
-		<Card text={"Welcome back " + username} />
+		<Card text={typeof localStorage.getItem('user') !== "string"
+					? "You are not logged in"
+					: "Welcome " + localStorage.getItem('user')
+		} />
 	);
 };

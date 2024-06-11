@@ -13,12 +13,6 @@ api = Blueprint('api', __name__)
 # Allow CORS requests to this API
 CORS(api)
 
-@api.route('/', methods=['POST', 'GET'])
-def backend_check():
-
-    return jsonify({"message": "GOOD NEWS! Backend is running good job ;)"}), 200
-
-
 @api.route("/signup", methods=["POST"])
 def create_user():
     new_user = request.get_json()
@@ -49,7 +43,7 @@ def authenticate_user():
         return jsonify({"message": "Wrong email or password :("}), 401
     
     access_token = create_access_token(identity=user.id)
-    return jsonify({ "token": access_token, "username": user.username })
+    return jsonify({ "token": access_token})
 
 
 @api.route("/welcome", methods=["GET"])
@@ -58,4 +52,4 @@ def protected():
     current_user_id = get_jwt_identity()
     user = User.query.get(current_user_id)
     
-    return jsonify({"id": user.id, "username": user.username}), 200
+    return jsonify({"username": user.username}), 200
